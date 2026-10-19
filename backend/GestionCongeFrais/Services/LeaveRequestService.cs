@@ -41,22 +41,23 @@ namespace GestionCongeFrais.Services
             if (overlap)
                 throw new Exception("La période chevauche un autre congé déjà approuvé.");
 
-            // Vérifier solde disponible (30 jours max pour congé annuel)
-            if (type.Name == "Congé Annuel") // vérifie par nom, tu peux changer selon ton cas
+            // Vérifier le solde : MaxDays par an et par type de congé (0 = illimité)
+            if (type.MaxDays > 0)
             {
                 int requestedDays = (dto.EndDate.Date - dto.StartDate.Date).Days + 1;
+                int year = dto.StartDate.Year;
 
                 var approvedLeaves = await _context.LeaveRequests
                     .Where(l => l.RequesterId == requesterId
                                 && l.LeaveTypeId == dto.LeaveTypeId
                                 && l.Status == LeaveStatus.Approved
-                                && l.StartDate.Year == DateTime.UtcNow.Year)
+                                && l.StartDate.Year == year)
                     .ToListAsync();
 
                 int usedDays = approvedLeaves.Sum(l => (l.EndDate.Date - l.StartDate.Date).Days + 1);
 
-                if (usedDays + requestedDays > 30)
-                    throw new Exception($"Solde insuffisant. Vous avez déjà utilisé {usedDays}/30 jours cette année.");
+                if (usedDays + requestedDays > type.MaxDays)
+                    throw new Exception($"Solde insuffisant pour « {type.Name} » : {requestedDays} jour(s) demandé(s), {usedDays}/{type.MaxDays} déjà utilisé(s) en {year}.");
             }
 
             // Création de la demande
