@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:5000/api'
+// Adresse de l'API : variable VITE_API_URL (fichier .env), sinon l'API locale
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Configuration Axios
 axios.defaults.baseURL = API_BASE_URL
