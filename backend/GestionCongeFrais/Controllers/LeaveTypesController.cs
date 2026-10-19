@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class LeaveTypesController : ControllerBase
 {
     private readonly ILeaveTypeService _leaveTypeService;
@@ -30,6 +31,7 @@ public class LeaveTypesController : ControllerBase
         return Ok(leaveType);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<LeaveType>> CreateLeaveType(LeaveTypeDTO dto)
     {
@@ -37,6 +39,7 @@ public class LeaveTypesController : ControllerBase
         return CreatedAtAction(nameof(GetLeaveType), new { id = created.Id }, created);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateLeaveType(int id, LeaveTypeDTO dto)
     {
@@ -45,6 +48,7 @@ public class LeaveTypesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteLeaveType(int id)
     {

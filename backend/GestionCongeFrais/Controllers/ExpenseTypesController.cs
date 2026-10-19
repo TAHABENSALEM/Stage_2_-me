@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ExpenseTypesController : ControllerBase
 {
     private readonly IExpenseTypeService _service;
@@ -29,6 +30,7 @@ public class ExpenseTypesController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<ExpenseType>> Create(ExpenseTypeDTO dto)
     {
@@ -36,6 +38,7 @@ public class ExpenseTypesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, ExpenseTypeDTO dto)
     {
@@ -44,6 +47,7 @@ public class ExpenseTypesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

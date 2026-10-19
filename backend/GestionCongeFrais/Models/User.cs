@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GestionCongeFrais.Models
 {
@@ -14,7 +15,8 @@ namespace GestionCongeFrais.Models
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string PasswordHash { get; set; } = string.Empty; // ajouter cette ligne
+        [JsonIgnore] // jamais renvoyé par l'API
+        public string PasswordHash { get; set; } = string.Empty;
 
         public string Role { get; set; } = "Employé";
 

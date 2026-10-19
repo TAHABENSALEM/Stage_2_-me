@@ -10,6 +10,7 @@ namespace GestionCongeFrais.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class HolidayController : ControllerBase
 {
     private readonly IHolidayService _service;
@@ -34,6 +35,7 @@ public class HolidayController : ControllerBase
         return Ok(holiday);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] HolidayDTO dto)
     {
@@ -41,6 +43,7 @@ public class HolidayController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = newHoliday.Id }, newHoliday);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] HolidayDTO dto)
     {
@@ -49,6 +52,7 @@ public class HolidayController : ControllerBase
         return Ok(updated);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
