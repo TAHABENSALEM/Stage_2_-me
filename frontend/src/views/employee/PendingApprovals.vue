@@ -267,6 +267,7 @@
 import { ref, onMounted, computed } from 'vue'
 import AppNavbar from '@/components/AppNavbar.vue'
 import apiService from '@/services/api'
+import { Toast } from 'bootstrap'
 
 // State
 const loadingLeave = ref(true)
@@ -365,7 +366,7 @@ const handleExpenseRequest = async (requestId, action) => {
 const showToast = (message, type = 'success') => {
   toastMessage.value = message
   const toastElement = document.getElementById('successToast')
-  const toast = new bootstrap.Toast(toastElement)
+  const toast = new Toast(toastElement)
   toast.show()
 }
 

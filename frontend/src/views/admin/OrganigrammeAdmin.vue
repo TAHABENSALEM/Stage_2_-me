@@ -87,7 +87,7 @@
                       <i class="fas fa-user-circle fa-2x" :class="getRoleColor(employee.role)"></i>
                     </div>
                     <div class="flex-grow-1">
-                      <h6 class="mb-1">{{ employee.firstName }} {{ employee.lastName }}</h6>
+                      <h6 class="mb-1">{{ employee.fullName }}</h6>
                       <small class="text-muted">
                         <i class="fas fa-briefcase me-1"></i>
                         {{ employee.role }}
@@ -132,7 +132,7 @@
                   <div class="d-flex align-items-center">
                     <i class="fas fa-user-circle fa-3x me-3" :class="getRoleColor(selectedEmployee.role)"></i>
                     <div>
-                      <h5 class="mb-1">{{ selectedEmployee.firstName }} {{ selectedEmployee.lastName }}</h5>
+                      <h5 class="mb-1">{{ selectedEmployee.fullName }}</h5>
                       <p class="mb-1">
                         <span class="badge" :class="getRoleBadgeClass(selectedEmployee.role)">
                           {{ selectedEmployee.role }}
@@ -153,7 +153,7 @@
                     <div class="d-flex align-items-center">
                       <i class="fas fa-user-tie fa-2x text-primary me-3"></i>
                       <div>
-                        <h6 class="mb-1">{{ selectedEmployeeManager.firstName }} {{ selectedEmployeeManager.lastName }}</h6>
+                        <h6 class="mb-1">{{ selectedEmployeeManager.fullName }}</h6>
                         <small class="text-muted">
                           <i class="fas fa-briefcase me-1"></i>
                           {{ selectedEmployeeManager.role }}
@@ -187,7 +187,7 @@
                       <div class="d-flex align-items-center">
                         <i class="fas fa-user fa-2x text-success me-3"></i>
                         <div>
-                          <h6 class="mb-1">{{ subordinate.firstName }} {{ subordinate.lastName }}</h6>
+                          <h6 class="mb-1">{{ subordinate.fullName }}</h6>
                           <small class="text-muted">
                             <i class="fas fa-briefcase me-1"></i>
                             {{ subordinate.role }}
@@ -282,8 +282,7 @@ const filteredEmployees = computed(() => {
   
   const term = searchTerm.value.toLowerCase()
   return users.value.filter(user => 
-    user.firstName.toLowerCase().includes(term) || 
-    user.lastName.toLowerCase().includes(term) ||
+    (user.fullName || '').toLowerCase().includes(term) ||
     user.email.toLowerCase().includes(term)
   )
 })
@@ -326,7 +325,7 @@ const fetchUsers = async () => {
     users.value = response.data || []
     console.log('Users récupérés:', users.value)
     console.log('Roles trouvés:', users.value.map(u => u.role))
-    console.log('Relations managerId:', users.value.map(u => ({ name: u.firstName + ' ' + u.lastName, managerId: u.managerId })))
+    console.log('Relations managerId:', users.value.map(u => ({ name: u.fullName, managerId: u.managerId })))
   } catch (error) {
     console.error('Erreur lors de la récupération des utilisateurs:', error)
   } finally {

@@ -42,7 +42,7 @@
                         <i class="fas fa-calendar me-2 text-warning"></i>
                         {{ formatDate(holiday.date) }}
                       </td>
-                      <td><strong>{{ holiday.name }}</strong></td>
+                      <td><strong>{{ holiday.description }}</strong></td>
                       <td>
                         <button 
                           class="btn btn-sm btn-outline-danger"
@@ -184,7 +184,7 @@ const saveHoliday = async () => {
     saving.value = true
     formError.value = ''
     
-    await apiService.createHoliday(form.value)
+    await apiService.createHoliday({ date: form.value.date, description: form.value.name })
     
     const modal = Modal.getInstance(document.getElementById('holidayModal'))
     modal.hide()
@@ -198,7 +198,7 @@ const saveHoliday = async () => {
 }
 
 const confirmDelete = async (holiday) => {
-  if (confirm(`Êtes-vous sûr de vouloir supprimer "${holiday.name}" ?`)) {
+  if (confirm(`Êtes-vous sûr de vouloir supprimer "${holiday.description}" ?`)) {
     try {
       await apiService.deleteHoliday(holiday.id)
       await fetchHolidays()
