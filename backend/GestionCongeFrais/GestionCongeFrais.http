@@ -1,6 +1,11 @@
-@GestionCongeFrais_HostAddress = http://localhost:5108
+@GestionCongeFrais_HostAddress = http://localhost:5000
 
-GET {{GestionCongeFrais_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{GestionCongeFrais_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@entreprise.com",
+  "password": "Admin123!"
+}
 
 ###

@@ -11,7 +11,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1-JWT config
+// 1-JWT config : la clé vient de appsettings.Development.json en local,
+// ou de la variable d'environnement Jwt__Key en production.
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey))
+    throw new InvalidOperationException("Clé JWT manquante : définissez Jwt:Key (variable d'environnement Jwt__Key).");
+
+// JWT config
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -24,7 +30,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+                Encoding.UTF8.GetBytes(jwtKey)
             )
         };
     });
@@ -82,6 +88,10 @@ void CreateDefaultAdmin(IServiceProvider services)
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
 
+    // Crée la base et applique les migrations si nécessaire
+    context.Database.Migrate();
+
+    // Admin par défaut : il devra changer son mot de passe à la première connexion
     if (!context.Users.Any(u => u.Role == "Admin"))
     {
         var admin = new User
@@ -115,27 +125,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Créer l'admin par défaut si nécessaire
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
-
-    // Créer l'admin par défaut si nécessaire
-    if (!context.Users.Any(u => u.Role == "Admin"))
-    {
-        var admin = new User
-        {
-            FullName = "Administrateur Système",
-            Email = "admin@entreprise.com",
-            Role = "Admin",
-            PasswordChanged = true // L'admin a déjà changé son mot de passe
-        };
-        admin.PasswordHash = passwordHasher.HashPassword(admin, "Admin123!");
-        context.Users.Add(admin);
-        context.SaveChanges();
-    }
-}
 
 app.Run();
